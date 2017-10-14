@@ -9,7 +9,6 @@ module.exports = (config) => {
   service.set('serviceRegistry', serviceRegistry);
 
   service.put('/service/:intent/:port', (req, res, next) => {
-    console.log(req.params);
     const serviceIntent = req.params.intent;
     const servicePort = req.params.port;
 

@@ -3,71 +3,62 @@
 const RtmClient = require('@slack/client').RtmClient;
 const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 const RTM_EVENTS = require('@slack/client').RTM_EVENTS;
-let rtm = null;
-let nlp = null;
-let registry = null
 
-function handleOnAuthenticated(rtmStartData) {
-  console.log(`Logged in as ${rtmStartData.self.name} of team ${rtmStartData.team.name}, but not yet connected to a channel`);
+class SlackClient {
+  constructor(token, logLevel, nlp, registry) {
+    this._rtm = new RtmClient(token, {logLevel: logLevel});
+    this._nlp = nlp;
+    this._registry = registry;
+
+    this._addAuthenticatedHandler(this._handleOnAuthenticatedMessage);
+    this._rtm.on(RTM_EVENTS.MESSAGE, this._handleOnMessage.bind(this));
+  }
+
+  _handleOnAuthenticatedMessage(rtmStartData) {
+    console.log(`Logged in as ${rtmStartData.self.name} of team ${rtmStartData.team.name}, but not yet connected to a channel`);
+  }
+
+  _addAuthenticatedHandler (handler) {
+  	this._rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, handler.bind(this));
+  }
+
+  _handleOnMessage (message) {
+    console.log(message.text);
+  	if (message.text.toLowerCase().includes('tamerbot')) {
+  		this._nlp.ask(message.text, (err, res) => {
+  			if (err) {
+  				console.log(err);
+  				return;
+  			}
+
+  			try {
+  				if (!res.intent || !res.intent[0] || !res.intent[0].value) {
+  					throw new Error ("Could not extract intent.");
+  				}
+
+  				const intent = require('./intents/' + res.intent[0].value + 'Intent');
+
+  				intent.process (res, this._registry, (error, response) => {
+  					if (error) {
+  						console.log(error.message);
+  						return;
+  					}
+
+  					return this._rtm.sendMessage (response, message.channel);
+  				});
+
+  			} catch(err) {
+  				console.log(err);
+  				this._rtm.sendMessage('Sorry, I don\'t know what you are talking about.', message.channel);
+  			}
+  		});
+  	}
+  }
+
+  start(handler) {
+    this._addAuthenticatedHandler(handler);
+    this._rtm.start();
+  }
 }
 
-function handleOnMessage (message) {
-  console.log(message.text);
-	if (message.text.toLowerCase().includes('tamerbot')) {
-		nlp.ask(message.text, (err, res) => {
-			if (err) {
-				console.log(err);
-				return;
-			}
-
-			try {
-				if (!res.intent || !res.intent[0] || !res.intent[0].value) {
-					throw new Error ("Could not extract intent.");
-				}
-
-				const intent = require('./intents/' + res.intent[0].value + 'Intent');
-
-				intent.process (res, registry, function (error, response) {
-					if (error) {
-						console.log(error.message);
-						return;
-					}
-
-					return rtm.sendMessage (response, message.channel);
-				});
-
-			} catch(err) {
-				console.log(err);
-				rtm.sendMessage("Sorry, I don't know what you are talking about.", message.channel);
-			}
-
-			/*if (!res.intent) {
-				return rtm.sendMessage("Sorry, I don't know what you are talking about.", message.channel);
-			} else if (res.intent[0].value == 'time' && res.location) {
-				return rtm.sendMessage(`I don't yet know the time in ${res.location[0].value}.`, message.channel);
-			} else {
-				console.log(res.body);
-				return rtm.sendMessage("Sorry, I don't know what you are talking about.", message.channel);
-			}
-
-			rtm.sendMessage("Sorry, I don't understand", message.channel, function messageSent () {
-			});*/
-		});
-	}
-}
-
-function addAuthenticatedHandler (rtm, handler) {
-	// The client will emit an RTM.AUTHENTICATED event on successful connection, with the `rtm.start` payload
-	rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, handler);
-}
-
-module.exports.init = function slackClient(token, logLevel, nlpClient, serviceRegistry) {
-	rtm = new RtmClient(token, {logLevel: logLevel});
-	nlp = nlpClient;
-  registry = serviceRegistry;
-	addAuthenticatedHandler(rtm, handleOnAuthenticated);
-	rtm.on(RTM_EVENTS.MESSAGE, handleOnMessage);
-	return rtm;
-}
-
-module.exports.addAuthenticatedHandler = addAuthenticatedHandler;
+module.exports = SlackClient;
