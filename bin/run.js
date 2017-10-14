@@ -8,7 +8,8 @@ const http = require('http');
 const server = http.createServer(service);
 
 const witToken = config.wit_token;
-const witClient = require ('../server/witClient')(witToken);
+const WitClient = require ('../server/witClient');
+const witClient = new WitClient(witToken);
 
 const slackToken = config.slack_token;
 const slackLogLevel = 'verbose';
