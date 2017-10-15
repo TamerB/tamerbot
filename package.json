@@ -4,13 +4,14 @@
   "description": "",
   "main": "server/service.js",
   "scripts": {
-    "test": "nyc mocha --recursive --timeout 30000 test",
+    "test": "NODE_ENV=test eslint bin server && nyc mocha --recursive --timeout 30000 test",
     "start": "node bin/run"
   },
   "author": "Tamer M Bahgat",
   "license": "ISC",
   "dependencies": {
     "@slack/client": "^3.14.0",
+    "bunyan": "^1.8.12",
     "dotenv": "^4.0.0",
     "express": "^4.16.1",
     "superagent": "^3.6.1"
