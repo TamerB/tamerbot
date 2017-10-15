@@ -7,7 +7,7 @@
     "test": "NODE_ENV=test eslint bin server && nyc mocha --recursive --timeout 30000 test",
     "start": "node bin/run"
   },
-  "engine": {
+  "engines": {
     "node": "8.0.0"
   },
   "repository": {
