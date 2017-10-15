@@ -11,7 +11,7 @@ const log = {
   test: () => {
     return bunyan.createLogger({name: 'tamerbot-test', level: 'fatal'});
   }
-}
+};
 
 module.exports = {
   wit_token: process.env.WIT_TOKEN,
@@ -22,4 +22,4 @@ module.exports = {
     if (env) return log[env]();
     return log[process.env.NODE_ENV || 'development']();
   }
-}
+};
