@@ -8,7 +8,7 @@
     "start": "node bin/run"
   },
   "engine": {
-    "node": "8.0.0"
+    "node": "6.9.5",
   },
   "repository": {
     "type": "git",
