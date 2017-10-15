@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 const RtmClient = require('@slack/client').RtmClient;
 const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
