@@ -7,6 +7,13 @@
     "test": "NODE_ENV=test eslint bin server && nyc mocha --recursive --timeout 30000 test",
     "start": "node bin/run"
   },
+  "engine": {
+    "node": "8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TamerB/tamerbot.git"
+  },
   "author": "Tamer M Bahgat",
   "license": "ISC",
   "dependencies": {
