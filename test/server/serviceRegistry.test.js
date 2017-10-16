@@ -15,7 +15,7 @@ describe('ServiceRegistry', () => {
   describe('add / get', () => {
     it('should add a new intnet to the registry and provide it via get', () => {
       const serviceRegistry = new ServiceRegistry(30, config.log());
-      serviceRegistry.add('test', '127.0.0.1', 9999);
+      serviceRegistry.add('test', '127.0.0.1', 9999, 'someToken');
       const testIntent = serviceRegistry.get('test');
       testIntent.ip.should.equal('127.0.0.1');
       testIntent.port.should.equal(9999);
@@ -23,10 +23,10 @@ describe('ServiceRegistry', () => {
 
     it('should update a service', () => {
       const serviceRegistry = new ServiceRegistry(30, config.log());
-      serviceRegistry.add('test', '127.0.0.1', 9999);
+      serviceRegistry.add('test', '127.0.0.1', 9999, 'someToken');
       const testIntent1 = serviceRegistry.get('test');
 
-      serviceRegistry.add('test', '127.0.0.1', 9999);
+      serviceRegistry.add('test', '127.0.0.1', 9999, 'someToken');
       const testIntent2 = serviceRegistry.get('test');
 
       Object.keys(serviceRegistry._services).length.should.equal(1);
@@ -37,8 +37,8 @@ describe('ServiceRegistry', () => {
   describe('remove', () => {
     it('should remove a service from the registry', () => {
       const serviceRegistry = new ServiceRegistry(30, config.log());
-      serviceRegistry.add('test', '127.0.0.1', 9999);
-      serviceRegistry.remove('test', '127.0.0.1', 9999);
+      serviceRegistry.add('test', '127.0.0.1', 9999, 'someToken');
+      serviceRegistry.remove('test', '127.0.0.1', 9999, 'someToken');
       const testIntent = serviceRegistry.get('test');
       should.not.exist(testIntent);
     });
@@ -47,7 +47,7 @@ describe('ServiceRegistry', () => {
   describe('_cleanup', () => {
     it('should remove expired services', () => {
       const serviceRegistry = new ServiceRegistry(-1, config.log());
-      serviceRegistry.add('test', '127.0.0.1', 9999);
+      serviceRegistry.add('test', '127.0.0.1', 9999, 'someToken');
       const testIntent = serviceRegistry.get('test');
       should.not.exist(testIntent);
     });

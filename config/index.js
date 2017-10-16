@@ -18,6 +18,7 @@ module.exports = {
   slack_token: process.env.SLACK_TOKEN,
   slackLogLevel: 'verbose',
   serviceTimout: 30,
+  tamerbotApiToken: process.env.TAMERBOT_API_TOKEN,
   log: (env) => {
     if (env) return log[env]();
     return log[process.env.NODE_ENV || 'development']();

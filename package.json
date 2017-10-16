@@ -4,8 +4,8 @@
   "description": "",
   "main": "server/service.js",
   "scripts": {
-    "test": "NODE_ENV=test eslint bin server && nyc mocha --recursive --timeout 30000 test",
-    "start": "node bin/run"
+    "test": "NODE_ENV=test eslint bin server && nyc mocha --recursive test  | ./node_modules/.bin/bunyan",
+    "start": "node bin/run | ./node_modules/.bin/bunyan"
   },
   "engines": {
     "node": "8.0.0"
