@@ -17,7 +17,7 @@ module.exports.process = function process (intentData, registry, log, cb) {
   }
 
   request.get(`http://${service.ip}:${service.port}/service/${location}`)
-    .set('X-SERVICE-TOKEN', service.accessToken)
+    .set('X-TAMERBOT-SERVICE-TOKEN', service.accessToken)
     .end((err, res) => {
       if (err || res.statusCode !== 200 || !res.body.result) {
         log.error(err);
